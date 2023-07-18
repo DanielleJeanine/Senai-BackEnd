@@ -2,7 +2,7 @@ package com.logica.programa;
 
 import java.text.DecimalFormat;
 import java.util.Scanner;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 
 public class Programa {
     Scanner leia = new Scanner(System.in);
