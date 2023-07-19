@@ -10,7 +10,7 @@ public class ProgramaApplication {
 		SpringApplication.run(ProgramaApplication.class, args);
 
 		Decisao decisao = new Decisao();
-		decisao.exercicio1();
+		decisao.exercicio3();
 	}
 
 }
