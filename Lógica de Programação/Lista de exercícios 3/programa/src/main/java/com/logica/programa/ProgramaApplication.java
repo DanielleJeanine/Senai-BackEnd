@@ -10,7 +10,7 @@ public class ProgramaApplication {
 		SpringApplication.run(ProgramaApplication.class, args);
 
 		LoopRepeticao repeticao = new LoopRepeticao();
-		repeticao.exercicio1();
+		repeticao.exercicio5();
 	}
 
 }

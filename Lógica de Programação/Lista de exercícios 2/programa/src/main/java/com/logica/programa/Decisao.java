@@ -97,12 +97,14 @@ public class Decisao {
         String loginDigitado;
         int senhaDigitada;
 
+
         System.out.println("\n Exercício 5");
         System.out.println("Informe seu login:");
         loginDigitado = leia.nextLine();
         System.out.println("Digite sua senha: ");
         senhaDigitada = leia.nextInt();
 
+        
         if (loginDigitado.equals(login) && senhaDigitada == senha) {
             System.out.println("Olá, " + login + ", seja bem vinda.");
 
