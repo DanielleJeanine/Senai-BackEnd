@@ -1,0 +1,179 @@
+/* ADICIONANDO TABELAS */
+
+
+
+CREATE TABLE clinica_veterinaria (
+	id SERIAL PRIMARY KEY,
+	razao_social VARCHAR(50) NOT NULL,
+	cnpj CHAR(14)NOT NULL UNIQUE,
+    	endereco VARCHAR (100) NOT NULL,
+	telefone VARCHAR (14) NOT NULL	
+	);
+
+
+CREATE TABLE funcionario (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL,
+	cpf CHAR(11)NOT NULL UNIQUE,
+	funcao VARCHAR(255) NOT NULL,
+	endereco VARCHAR (100) NOT NULL,
+	telefone VARCHAR (14) NOT NULL
+);
+
+CREATE TABLE tutor (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL,
+	cpf CHAR(11)NOT NULL UNIQUE,
+	endereco VARCHAR (100) NOT NULL,
+	telefone VARCHAR (14) NOT NULL,	
+	email VARCHAR (50)
+);
+
+CREATE TABLE pet (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(30) NOT NULL,
+	especie VARCHAR (30) NOT NULL, 
+	raca VARCHAR(30) NOT NULL,
+	idade INT NOT NULL,
+	cor VARCHAR(30),
+	cartao_de_vacina CHAR(10)NOT NULL UNIQUE 					
+);
+
+CREATE TABLE consulta (
+	id SERIAL PRIMARY KEY
+);	
+	
+
+/*----------------------------------------------*/
+/* ADICIONANDO CHAVES ESTRANGEIRAS PARA CRIAR OS RELACIONAMENTOS*/
+
+ALTER TABLE funcionario 
+ADD COLUMN id_clinica INT NOT NULL,
+ADD CONSTRAINT fk_id_clinica
+FOREIGN KEY (id_clinica) REFERENCES clinica_veterinaria(id);
+
+ALTER TABLE pet
+ADD COLUMN id_tutor INT NOT NULL,
+ADD CONSTRAINT fk_id_tutor
+FOREIGN KEY (id_tutor) REFERENCES tutor(id);
+
+
+ALTER TABLE consulta
+ADD COLUMN id_pet INT NOT NULL,
+ADD CONSTRAINT fk_id_pet
+FOREIGN KEY (id_pet) REFERENCES pet(id); 
+
+ALTER TABLE consulta
+ADD COLUMN id_funcionario INT NOT NULL,
+ADD CONSTRAINT fk_id_funcionario
+FOREIGN KEY (id_funcionario) REFERENCES funcionario(id);
+
+
+/* ------------------------------------------------*/
+/* INSERINDO DADOS NAS TABELAS  */
+
+INSERT INTO clinica_veterinaria (id, razao_social, cnpj, endereco, telefone) VALUES
+(1,'Clinica Lovet', '12345678912123', 'Rua dos Alfeneiros, 14', '24 2242-2222' ),
+(2, 'Clinica PetPetropolis', '98765432198765', 'Rua do Imperador, 123', '24 99999-8888'),
+(3, 'Clinica Zé dos Pets', '65498732178974', 'Rua dos Bobos, 0', '24 85858-5623');
+
+INSERT INTO funcionario (id, nome, cpf, funcao, endereco, telefone, id_clinica) VALUES
+(1, 'Francisco', '12345678974', 'atendente', 'Rua Teresa, 123', '24 9988-9696', 1),
+(2, 'Silvia', '65498732112', 'atendente', 'Rua Bingen, 123', '24 9898-6565', 2),
+(3, 'Pamela', '32165498747', 'atendente' , 'Rua do Imperador, 123', '246396-8585', 3),
+(4, 'Priscilla', '78945612396', 'veterinario(a)', 'Rua Quitandinha, 123', '2408525-9685', 1),
+(5, 'Henrique', '85274196345', 'veterinario(a)', 'Rua Bahia, 123', '24 85214789', 2),
+(6, 'Ana Paula', '74185296321', 'veterinario(a)', 'Rua Joelma, 123', '24 1236-6985', 3),
+(7, 'Severina', '96385214778', 'veterinario(a)', 'Rua dos Milionários, 123', '24 6396-8965', 2),
+(8, 'Jonathan', '45678912352', 'veterinario(a)', 'Rua Pipoca, 123', '24 9865-9635', 2); 
+
+INSERT INTO tutor (id, nome, cpf, endereco, telefone) VALUES
+(1, 'Danielle', '78845612399', 'Rua Francisco, 123', '24 98867-0255'),
+(2, 'Roberta', '12365478985', 'Rua Quitandinha, 123', '24 98888-8888'),
+(3, 'Rodrigo', '45698712322', 'Rua Central, 123', '24 95566-9696');
+
+INSERT INTO pet (id, nome, especie, raca, idade, cartao_de_vacina, id_tutor) VALUES
+(1, 'Bolt', 'cachorro', 'salsicha', 5, '1236547897', 1),
+(2, 'Luna', 'cachorro', 'srd', 2, '7894561230', 1),
+(3, 'Green', 'passaro', 'maritaca', 8, '4567891238', 1),
+(4, 'Moana', 'cachorro', 'são bernardo', 5, '4569871236', 2),
+(5, 'Floki', 'cachorro', 'srd', 2, '7418529632', 2),
+(6, 'Theobaldo', 'peixe', 'beta', 0, '8527419631', 2),
+(7, 'Take Easy', 'gato', 'srd', 2, '7896541232', 3),
+(8, 'Leco', 'gato', 'srd', 5, '8527419632', 3);
+
+
+INSERT INTO consulta (id, id_pet, id_funcionario) VALUES
+(1, 4 , 4),
+(2, 1, 8),
+(3, 8, 7),
+(4, 3, 4),
+(5, 6, 6),
+(6, 5, 5),
+(7, 2, 8),
+(8, 7, 6);
+
+
+/*-------------------------------------------------*/
+/* BUSCANDO QUANTOS FUNCIONÁRIO CADA CLÍNICA TEM */
+
+SELECT 
+    clinica_veterinaria.razao_social AS "Clínica",
+ COUNT funcionario.id_clinica AS "Funcionários"
+FROM 
+    clinica_veterinaria
+JOIN 
+    funcionario ON clinica_veterinaria.id = funcionario.id_clinica
+GROUP BY 
+    clinica_veterinaria.razao_social;
+
+/*-------------------------------------------------------------*/
+/* IFORMANDO QUAL PET FOI ATENDIDO POR QUAL VETERINÁRIO*/
+SELECT 
+    pet.nome AS "PET",
+	funcionario.nome AS "VETERINÁRIO"
+FROM 
+    consulta 
+JOIN funcionario ON consulta.id_funcionario = funcionario.id
+JOIN pet ON consulta.id_pet = pet.id
+
+
+/*-----------------------------------------------------------*/
+/*QUANTIDADE DE PETS QUE CADA TUTOR TEM*/
+
+
+SELECT 
+    tutor.nome AS "TUTOR",
+ COUNT (pet.id_tutor) AS "QUANTIDADES DE PETS"
+FROM tutor
+JOIN 
+    pet ON tutor.id = pet.id_tutor
+	GROUP BY  tutor.nome;
+
+/*-------------------------------------------------------*/
+/*QUAL PET PERTENCE A QUAL TUTOR*/
+
+SELECT 
+    tutor.nome AS "TUTOR",
+	pet.nome AS "PET"
+ FROM pet 
+JOIN tutor ON tutor.id = pet.id_tutor;
+
+
+/*----------------------------------------------------------------------*/
+/* TOTAL DE CONSULTAS ATENDIDAS POR QUAL VETERINÁRIO E EM QUAL CLINICA*/
+
+
+SELECT 
+    clinica_veterinaria.razao_social,
+    funcionario.nome,
+    COUNT(consulta.id_funcionario) AS "TOTAL DE CONSULTAS21:20 15/08/2023"
+FROM 
+    consulta	 
+JOIN 
+    funcionario ON consulta.id_funcionario = funcionario.id 
+JOIN 
+    clinica_veterinaria ON funcionario.id_clinica = clinica_veterinaria.id
+GROUP BY 
+    clinica_veterinaria.razao_social, funcionario.nome;
+	
